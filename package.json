@@ -6,11 +6,13 @@
   "author": "Space125 <kurilov@list.ru>",
   "license": "MIT",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "@stomp/stompjs": "^6.1.0",
     "sockjs-client": "^1.5.1",
     "vue": "^2.6.12",
     "vue-resource": "^1.5.2",
-    "vuetify": "^2.5.1"
+    "vuetify": "^2.5.1",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
@@ -26,5 +28,6 @@
   },
   "scripts": {
     "start": "webpack serve"
-  }
+  },
+  "serve": "vue-cli-service serve --host localhost"
 }

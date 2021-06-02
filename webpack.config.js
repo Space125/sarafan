@@ -8,6 +8,7 @@ module.exports = {
     devServer: {
         contentBase: './dist',
         compress: true,
+        host: 'localhost',
         port: 8000,
         allowedHosts: [
             'localhost:9000'
