@@ -9,23 +9,18 @@
       </v-btn>
     </v-app-bar>
     <v-main>
-      <v-container v-if="!profile">Необходимо авторизоваться через <a href="/login">Google</a></v-container>
-      <v-container v-else>
-        <messages-list/>
+      <v-container fluid>
+        <router-view></router-view>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import MessagesList from 'components/messages/MessageList.vue'
-import { addHandler } from 'util/ws'
-import { mapState, mapMutations } from "vuex";
+import {mapState, mapMutations} from "vuex";
+import {addHandler} from 'util/ws'
 
 export default {
-  components: {
-    MessagesList
-  },
   computed: mapState(['profile']),
   methods: mapMutations(['addMessageMutation', 'updateMessageMutation', 'removeMessageMutation']),
   created() {
