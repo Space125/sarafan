@@ -16,9 +16,8 @@ if(frontendData.profile){
 Vue.use(Vuetify)
 
 new Vue({
-    el: '#app',
     store,
     router,
     render: a => a(App),
     vuetify: new Vuetify()
-})
+}).$mount("#app")
