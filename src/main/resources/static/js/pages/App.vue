@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar app>
       <v-toolbar-title class="px-2 my-2">Sarafan</v-toolbar-title>
-      <v-btn  text v-if="profile"
+      <v-btn text v-if="profile"
              :disabled="$route.path === '/'"
              @click="showMessages">
         Messages
@@ -26,13 +26,18 @@
 </template>
 
 <script>
-import {mapState, mapMutations} from "vuex";
+import {mapState, mapMutations} from "vuex"
 import {addHandler} from 'util/ws'
 
 export default {
   computed: mapState(['profile']),
   methods: {
-    ...mapMutations(['addMessageMutation', 'updateMessageMutation', 'removeMessageMutation']),
+    ...mapMutations([
+      'addMessageMutation',
+      'updateMessageMutation',
+      'removeMessageMutation',
+      'addCommentMutation'
+    ]),
     showMessages() {
       this.$router.push('/')
     },
@@ -43,7 +48,6 @@ export default {
   created() {
     addHandler(data => {
       if (data.objectType === 'MESSAGE') {
-
         switch (data.eventType) {
           case 'CREATE':
             this.addMessageMutation(data.body)
@@ -57,7 +61,14 @@ export default {
           default:
             console.log(`Looks like the event type if unknown "${data.eventType}"`)
         }
-
+      } else if (data.objectType === 'COMMENT') {
+        switch (data.eventType) {
+          case 'CREATE':
+            this.addCommentMutation(data.body)
+            break
+          default:
+            console.log(`Looks like the event type if unknown "${data.eventType}"`)
+        }
       } else {
         console.log(`Looks like the object type if unknown "${data.objectType}"`)
       }

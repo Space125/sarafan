@@ -1,6 +1,7 @@
 package com.example.sarafan.controller;
 
 import com.example.sarafan.domain.Message;
+import com.example.sarafan.domain.User;
 import com.example.sarafan.domain.Views;
 import com.example.sarafan.dto.EventType;
 import com.example.sarafan.dto.MetaDto;
@@ -13,6 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -40,7 +42,7 @@ public class MessageController {
 
     public MessageController(MessageRepository messageRepository, WsSender wsSender) {
         this.messageRepository = messageRepository;
-        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.IdText.class);
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.FullMessage.class);
     }
 
     @GetMapping
@@ -56,9 +58,12 @@ public class MessageController {
     }
 
     @PostMapping
-    public Message create(@RequestBody Message message) throws IOException {
+    public Message create(
+            @RequestBody Message message,
+            @AuthenticationPrincipal User user) throws IOException, InterruptedException {
 
         message.setCreationDate(LocalDateTime.now());
+        message.setAuthor(user);
         fillMeta(message);
         Message createdMessage = messageRepository.save(message);
         wsSender.accept(EventType.CREATE, createdMessage);
@@ -67,6 +72,7 @@ public class MessageController {
     }
 
     @PutMapping("{id}")
+    @JsonView(Views.FullMessage.class)
     public Message update(
             @PathVariable("id") Message messageIdFromDb,
             @RequestBody Message message) throws IOException {

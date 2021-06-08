@@ -11,6 +11,9 @@ public final class Views {
     public interface IdText extends Id {
     }
 
+    public interface FullComment extends IdText {
+    }
+
     public interface FullMessage extends IdText {
     }
 }

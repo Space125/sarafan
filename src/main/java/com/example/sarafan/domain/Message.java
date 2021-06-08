@@ -1,13 +1,17 @@
 package com.example.sarafan.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ivan Kurilov on 18.05.2021
@@ -17,7 +21,8 @@ import java.time.LocalDateTime;
 @Table
 @Data
 @ToString(of = {"id", "text"})
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = {"id"})
+@JsonIdentityInfo(property = "id", generator = ObjectIdGenerators.PropertyGenerator.class)
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,6 +37,15 @@ public class Message {
     @JsonView(Views.FullMessage.class)
     private LocalDateTime creationDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonView(Views.FullMessage.class)
+    private User author;
+
+    @OneToMany(mappedBy = "message", orphanRemoval = true)
+    @JsonView(Views.FullMessage.class)
+    private List<Comment> comments = new ArrayList<>();
+
     @JsonView(Views.FullMessage.class)
     private String link;
     @JsonView(Views.FullMessage.class)
@@ -40,5 +54,13 @@ public class Message {
     private String linkDescription;
     @JsonView(Views.FullMessage.class)
     private String linkCover;
+
+
+    public void setComments(List<Comment> listComments){
+        this.comments.clear();
+        if(listComments != null){
+            this.comments.addAll(listComments);
+        }
+    }
 
 }

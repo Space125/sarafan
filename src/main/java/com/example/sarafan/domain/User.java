@@ -1,7 +1,9 @@
 package com.example.sarafan.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,11 +17,16 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name="users")
 @Data
+@ToString(of = {"id", "name"})
 public class User implements Serializable {
     @Id
+    @JsonView(Views.IdText.class)
     private String id;
+    @JsonView(Views.IdText.class)
     private String name;
+    @JsonView(Views.IdText.class)
     private String userpic;
+
     private String email;
     private String gender;
     private String locale;
