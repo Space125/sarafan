@@ -18,4 +18,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> webServerCustomizer(){
         return container -> container.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/"));
     }
+
 }

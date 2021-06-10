@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.Principal
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 
 @Configuration
 @EnableOAuth2Sso
+@EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -48,4 +50,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             return userDetailsRepositories.save(user);
         };
     }
+
+//    @Bean
+//    public AuthenticationSuccessHandler successHandler() {
+//        return new AuthenticationSuccessHandlerImpl();
+//    }
+
+    // https://docs.spring.io/spring-session/docs/current/reference/html5/guides/java-custom-cookie.html#custom-cookie-sample
+//    @Bean
+//    public CookieSerializer cookieSerializer() {
+//        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+//        serializer.setSameSite("none");
+//        serializer.setUseSecureCookie(true);
+//        serializer.setCookieName("JSESSIONID");
+//        serializer.setCookiePath("/");
+//        serializer.setDomainNamePattern("^.+?\\.(\\w+\\.[a-z]+)$");
+//        return serializer;
+//    }
 }
