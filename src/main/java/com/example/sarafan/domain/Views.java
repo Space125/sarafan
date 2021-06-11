@@ -16,4 +16,7 @@ public final class Views {
 
     public interface FullMessage extends IdText {
     }
+
+    public interface FullProfile extends IdText{
+    }
 }

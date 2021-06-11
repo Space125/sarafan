@@ -12,7 +12,6 @@ export default {
     window.onscroll = () => {
       const el = document.documentElement
       const isButtonOfScreen = (window.innerHeight + window.pageYOffset ) >= el.offsetHeight - 1
-      console.log('window=' + (window.innerHeight + window.pageYOffset) + '>=' + (el.offsetHeight - 1))
 
       if(isButtonOfScreen){
         this.loadPageAction()
