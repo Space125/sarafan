@@ -1,11 +1,14 @@
 package com.example.sarafan.controller;
 
 import com.example.sarafan.domain.User;
+import com.example.sarafan.domain.UserSubscription;
 import com.example.sarafan.domain.Views;
 import com.example.sarafan.service.ProfileService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author Ivan Kurilov on 10.06.2021
@@ -37,5 +40,19 @@ public class ProfileController {
         } else {
             return profileService.changeSubscription(channel, subscriber);
         }
+    }
+
+    @GetMapping("get-subscribers/{channelId}")
+    @JsonView(Views.IdText.class)
+    public List<UserSubscription> subscribers(@PathVariable("channelId") User channel) {
+        return profileService.getSubscribers(channel);
+    }
+
+    @PostMapping("change-status/{subscriberId}")
+    @JsonView(Views.IdText.class)
+    public UserSubscription changeSubscriptionStatus(
+            @AuthenticationPrincipal User channel,
+            @PathVariable("subscriberId") User subscriber) {
+        return profileService.changeSubscriptionStatus(channel, subscriber);
     }
 }

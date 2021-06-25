@@ -14,6 +14,7 @@ import java.util.Set;
 /**
  * @author Ivan Kurilov on 19.05.2021
  */
+
 @Entity
 @Table(name="users")
 @Data
@@ -39,31 +40,12 @@ public class User implements Serializable {
     @JsonView(Views.FullProfile.class)
     private LocalDateTime lastVisit;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_subscriptions",
-            joinColumns = @JoinColumn(name = "subscriber_id"),
-            inverseJoinColumns = @JoinColumn(name = "channel_id")
-    )
-    @JsonView(Views.FullProfile.class)
-    @JsonIdentityReference
-    @JsonIdentityInfo(
-            property = "id",
-            generator = ObjectIdGenerators.PropertyGenerator.class
-    )
-    private Set<User> subscriptions = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_subscriptions",
-            joinColumns = @JoinColumn(name = "channel_id"),
-            inverseJoinColumns = @JoinColumn(name = "subscriber_id")
-    )
     @JsonView(Views.FullProfile.class)
-    @JsonIdentityReference
-    @JsonIdentityInfo(
-            property = "id",
-            generator = ObjectIdGenerators.PropertyGenerator.class
-    )
-    private Set<User> subscribers = new HashSet<>();
+    @OneToMany(mappedBy = "subscriber", orphanRemoval = true)
+    private Set<UserSubscription> subscriptions = new HashSet<>();
+
+    @JsonView(Views.FullProfile.class)
+    @OneToMany(mappedBy = "channel", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<UserSubscription> subscribers = new HashSet<>();
 }

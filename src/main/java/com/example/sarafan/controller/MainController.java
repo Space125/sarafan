@@ -30,7 +30,7 @@ public class MainController {
     private final MessageService messageService;
     private final ProfileService profileService;
 
-    @Value("${spring.profiles.active}")
+    @Value("${spring.profiles.active:prod}")
     private String profile;
     private final ObjectWriter messageWriter;
     private final ObjectWriter profileWriter;
@@ -64,7 +64,7 @@ public class MainController {
 
             Sort sort = Sort.by(Sort.Direction.DESC, "id");
             PageRequest pageRequest = PageRequest.of(0, MessageController.MESSAGE_PER_PAGE, sort);
-            MessagePageDto messagePageDto = messageService.findAll(pageRequest);
+            MessagePageDto messagePageDto = messageService.findForUser(pageRequest, user);
 
             String messages = messageWriter.writeValueAsString(messagePageDto.getMessages());
 

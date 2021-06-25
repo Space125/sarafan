@@ -11,6 +11,6 @@ import java.util.Optional;
  */
 public interface UserDetailsRepositories extends JpaRepository<User, String> {
     @Override
-    @EntityGraph(attributePaths = {"subscriptions", "subscribers"})
+    @EntityGraph(attributePaths = {"subscribers", "subscriptions"})
     Optional<User> findById(String s);
 }

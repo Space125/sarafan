@@ -1,20 +1,22 @@
 <template>
   <v-container>
-    <v-layout column align-content-space-around justify-start>
-      <message-form :messageAttr="message"/>
-      <message-row v-for="message in sortedMessages"
-                   :key="message.id"
-                   :message="message"
-                   :editMessage="editMessage"/>
-      <lazy-loader></lazy-loader>
-    </v-layout>
+    <v-row dense align-content="space-around" justify="start">
+      <v-col cols="12">
+        <message-form :messageAttr="message"/>
+        <message-row v-for="message in sortedMessages"
+                     :key="message.id"
+                     :message="message"
+                     :editMessage="editMessage"/>
+        <lazy-loader></lazy-loader>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import MessageRow from 'components/messages/MessageRow.vue'
 import MessageForm from 'components/messages/MessageForm.vue'
-import {mapGetters} from 'vuex'
 import LazyLoader from "components/LazyLoader.vue"
 
 export default {

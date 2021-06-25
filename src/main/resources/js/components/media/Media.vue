@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import YouTube from "./YouTube.vue";
+import YouTube from "./YouTube.vue"
 
 export default {
   name: 'Media',

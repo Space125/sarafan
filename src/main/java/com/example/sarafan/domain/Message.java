@@ -29,6 +29,7 @@ public class Message {
     private long id;
 
     @JsonView(Views.IdText.class)
+    @Column(length = 2048)
     private String text;
 
     @Column(updatable = false)

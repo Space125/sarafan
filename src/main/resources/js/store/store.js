@@ -61,7 +61,6 @@ export default new Vuex.Store({
             const targetMessages = state.messages
                 .concat(messages)
                 .reduce((res, val) => {
-                    console.log('val = ' + val)
                     res[val.id] = val
                     return res
                 }, {})

@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import * as Sentry from "@sentry/vue"
 import {mapActions} from 'vuex'
 
 export default {
@@ -21,7 +22,7 @@ export default {
   data() {
     return {
       text: '',
-      id: ''
+      id: null
     }
   },
   watch: {
@@ -42,7 +43,7 @@ export default {
       }
 
       this.text = ''
-      this.id = ''
+      this.id = null
     }
   }
 }

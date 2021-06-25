@@ -14,7 +14,12 @@
               <v-row>{{ profile.gender }}</v-row>
               <v-row>{{ profile.lastVisit }}</v-row>
               <v-row>{{ profile.subscriptions && profile.subscriptions.length }} subscriptions</v-row>
-              <v-row>{{ profile.subscribers && profile.subscribers.length }} subscribers</v-row>
+              <v-row v-if="isMyProfile">
+                <router-link :to="`/subscriptions/${profile.id}`">
+                  {{ profile.subscribers && profile.subscribers.length }} subscribers
+                </router-link>
+              </v-row>
+              <v-row v-else>{{ profile.subscribers && profile.subscribers.length }} subscribers</v-row>
             </v-col>
           </v-row>
         </v-row>
@@ -46,8 +51,8 @@ export default {
     },
     isISubscribed() {
       return this.profile.subscribers &&
-          this.profile.subscribers.find( subscription => {
-            return subscription.id === this.$store.state.profile.id
+          this.profile.subscribers.find(subscription => {
+            return subscription.subscriber === this.$store.state.profile.id
           })
     }
   },

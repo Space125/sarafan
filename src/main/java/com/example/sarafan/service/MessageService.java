@@ -2,28 +2,31 @@ package com.example.sarafan.service;
 
 import com.example.sarafan.domain.Message;
 import com.example.sarafan.domain.User;
+import com.example.sarafan.domain.UserSubscription;
 import com.example.sarafan.domain.Views;
 import com.example.sarafan.dto.EventType;
 import com.example.sarafan.dto.MessagePageDto;
 import com.example.sarafan.dto.MetaDto;
 import com.example.sarafan.dto.ObjectType;
 import com.example.sarafan.repositories.MessageRepository;
+import com.example.sarafan.repositories.UserSubscriptionRepository;
 import com.example.sarafan.util.WsSender;
-import org.codehaus.jackson.map.annotate.JsonView;
+import io.sentry.Sentry;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author Ivan Kurilov on 09.06.2021
@@ -38,11 +41,16 @@ public class MessageService {
     private static Pattern IMAGE_REGEX = Pattern.compile(IMAGE_PATTERN, Pattern.CASE_INSENSITIVE);
 
     private final MessageRepository messageRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
     private final BiConsumer<EventType, Message> wsSender;
 
 
-    public MessageService(MessageRepository messageRepository, WsSender wsSender) {
+    public MessageService(
+            MessageRepository messageRepository,
+            UserSubscriptionRepository userSubscriptionRepository,
+            WsSender wsSender) {
         this.messageRepository = messageRepository;
+        this.userSubscriptionRepository = userSubscriptionRepository;
         this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.FullMessage.class);
     }
 
@@ -89,13 +97,23 @@ public class MessageService {
         wsSender.accept(EventType.REMOVE, message);
         messageRepository.delete(message);
     }
-    @JsonView(Views.FullMessage.class)
-    public Message update(Message messageIdFromDb, Message message) throws IOException {
-        BeanUtils.copyProperties(message, messageIdFromDb, "id");
-        fillMeta(messageIdFromDb);
-        Message updatedMessage = messageRepository.save(messageIdFromDb);
-        wsSender.accept(EventType.UPDATE, messageIdFromDb);
 
+    public Message update(Message messageIdFromDb, Message message) throws IOException {
+        Sentry.captureMessage("Update message");
+        Message updatedMessage = null;
+        try {
+            messageIdFromDb.setText(message.getText());
+            fillMeta(messageIdFromDb);
+            updatedMessage = messageRepository.save(messageIdFromDb);
+            wsSender.accept(EventType.UPDATE, messageIdFromDb);
+        } catch (Exception e){
+            throw new RuntimeException("omg!");
+        }
+        try {
+            throw new Exception("This is a test.");
+        } catch (Exception e) {
+            Sentry.captureException(e);
+        }
         return updatedMessage;
     }
 
@@ -113,8 +131,16 @@ public class MessageService {
         return messageRepository.getOne(message.getId());
     }
 
-    public MessagePageDto findAll(Pageable pageable) {
-        Page<Message> page = messageRepository.findAll(pageable);
+    public MessagePageDto findForUser(Pageable pageable, User user) {
+        List<User> channels = userSubscriptionRepository.findBySubscriber(user)
+                .stream()
+                .filter(UserSubscription::isActive)
+                .map(UserSubscription::getChannel)
+                .collect(Collectors.toList());
+
+        channels.add(user);
+
+        Page<Message> page = messageRepository.findByAuthorIn(channels, pageable);
         return new MessagePageDto(
                 page.getContent(),
                 pageable.getPageNumber(),
