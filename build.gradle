@@ -24,6 +24,13 @@ repositories {
     mavenCentral()
 }
 
+node {
+    //https://github.com/srs/gradle-node-plugin/blob/master/docs/node.md#configuring-the-plugin
+    // If true, it will download node using above parameters.
+    // If false, it will try to use globally installed node.
+    download = true
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
